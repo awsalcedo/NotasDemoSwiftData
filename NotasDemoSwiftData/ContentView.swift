@@ -104,10 +104,25 @@ struct ContentView: View {
 
                 }
             }
+            //Para que aparezca la pantlla de agregar una nota
             .sheet(isPresented: $isAddingNote) {
                 NoteEditorView(note: nil, categories: categories) { newNote in
                     addNote(newNote)
                     isAddingNote = false
+                }
+            }
+            //Para que aparezca la pantalla de agregar una categoría
+            .sheet(isPresented: $isAddingCategory) {
+                CategoryEditorView { newCategory in
+                    addNoteCategory(newCategory)
+                    isAddingCategory = false
+                }
+            }
+            .sheet(item: $selectedNote) { note in
+                //usamos la misma vista para editar
+                NoteEditorView(note: note, categories: categories) { updatedNote in
+                    updateNote(note, with: updatedNote)
+                    selectedNote = nil
                 }
             }
         }
@@ -115,6 +130,16 @@ struct ContentView: View {
     
     private func addNote(_ note: Note) {
         context.insert(note)
+    }
+    
+    private func addNoteCategory(_ category: Category) {
+        context.insert(category)
+    }
+    
+    private func updateNote(_ note: Note, with updatedNote: Note) {
+        note.title = updatedNote.title
+        note.content = updatedNote.content
+        note.categoryName = updatedNote.categoryName
     }
 }
 
